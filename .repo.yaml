@@ -1,0 +1,53 @@
+repo_slug: "Fintech-Point-In-Time-Availability-Guard-Data-Quality-algorithm"
+github: "IslamBaraka90/Fintech-Point-In-Time-Availability-Guard-Data-Quality-algorithm"
+visibility: "public"
+
+derives_from:
+  topic_id: "D01-F04-A05"
+  title: "Point-in-Time Availability Guard"
+  domain_id: "D01"
+  domain: "Market Data Engineering"
+  family_id: "D01-F04"
+  family: "Data Quality"
+  source_path: "algorithms/domains/D01-market-data-engineering/D01-F04-data-quality/D01-F04-A05-point-in-time-availability-guard"
+
+article_url: "https://thefintechbuilder.com/market-data-engineering/data-quality/point-in-time-availability-guard/"
+languages: ["python", "typescript"]
+npm_subpath: "fintech-algorithms/market-data-engineering/data-quality/point-in-time-availability-guard"
+
+# Split model: the reader keeps the teaching snippet; this repo owns the guard plus the
+# BACKTEST surface (build_panel, restatement_history, vintage_diff, publication_lag,
+# leakage_report).
+#
+# The surface was chosen because the tutorial answers "what did I know at this instant"
+# and a backtest needs that at EVERY instant plus the evidence the answer is stable:
+#   - vintage_diff        -> reproducibility. Same query, two run dates, valid_time held
+#                            FIXED so the diff isolates what you LEARNED rather than what
+#                            newly happened. A February run and a May re-run over the
+#                            identical window legitimately disagree.
+#   - restatement_history -> total_drift from first print to final. The number you acted
+#                            on vs the number in the dataset.
+#   - publication_lag     -> median is what you model, MAX is what breaks you. First
+#                            prints measured separately, since a revision's lag measures
+#                            the restatement not the publication.
+#   - leakage_report      -> withheld_share. On the fixture that is 47% at the first
+#                            query instant: the figure to show anyone who thinks
+#                            point-in-time filtering is a formality.
+#   - build_panel         -> coverage per instant, because a falling series count is a
+#                            feed going dark and it vanishes once rows are concatenated.
+#
+# NO STREAMING ENGINE — this is a query over a static bitemporal store.
+#
+# NOTABLE TEST FINDING: with valid_time held fixed, MORE knowledge does not merely pick
+# up revisions — it can reach a LATER OBSERVATION, because an observation inside the
+# window may not have arrived by the earlier cutoff (fixture: obs 01-23 at knowledge
+# 02-01 becomes obs 01-30 at knowledge 05-31). The early view was incomplete about its
+# own window. Asserted in both suites.
+#
+# PORT NOTE: timestamps require a MANDATORY offset (Z or +/-HH:MM) — a naive timestamp is
+# refused rather than assumed UTC, because guessing a zone shifts the very cutoff being
+# measured. Both ports normalise offsets and validate the calendar date explicitly.
+#
+# COMPLETES EVERY LIVE D01-F04 TOPIC (A01-A05; A06 is built but not published to the
+# site, so it is deliberately skipped).
+model: "split"
