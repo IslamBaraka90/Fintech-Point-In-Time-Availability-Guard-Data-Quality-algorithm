@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "fintech-point-in-time"
 version = "0.1.0"
 description = "Bitemporal point-in-time filtering — valid time and knowledge time kept separate, with leakage auditing, panel building, restatement history and vintage diffs."
-readme = "../README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "The Fintech Builder" }]
